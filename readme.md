@@ -1,0 +1,1 @@
+Este repositorio contiene ejemplos que hemos visto en clase durante el semestre 2 del curso Electrónica Digital 1 del año 2020.
