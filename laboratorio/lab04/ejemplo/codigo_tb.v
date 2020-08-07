@@ -11,10 +11,9 @@ module testbench();
   wire led1, led2;
 
   gateLevel   G1(p1, p2, p3, led1);
-  operadores OP1(p1, p2, p3, led2);
+  operadores OP1(p4, p5, p6, led2);
 
   initial begin
-    #1
     $display(" Tabla 1 y 2");
     $display("A B C | Y1 Y2");
     $display("------|------");

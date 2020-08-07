@@ -1,6 +1,5 @@
 // Ecuación a implementar: Y = (A * B * C') + (B + C)';
 
-
 module gateLevel(input wire A, B, C, output wire Y);
 
   wire notC, w2, w3, w4;
@@ -12,6 +11,8 @@ module gateLevel(input wire A, B, C, output wire Y);
   or  (Y, w2, w4);
 
 endmodule
+
+// Función a implementar: Y = (A * B' * C) + (B + C)'
 
 module operadores(input wire A, B, C, output wire Y);
 
