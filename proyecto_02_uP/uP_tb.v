@@ -27,6 +27,29 @@ module testbench();
     initial
         #500 $finish;
 
+    always
+        #5 clock = ~clock;
+
+    initial begin
+        clock = 0; reset = 0; pushbuttons = 4'b0110; nota = 0;
+        #2 reset = 1;
+        #1 reset = 0;
+        $display("\n");
+        $display("Bienvenido al testbench de su proyecto");
+        $display("\n");
+        $display("Para facilitar el código del testbench la nota se ha");
+        $display("multplicado por 10. Es decir, la nota máxima de esta");
+        $display("prueba es de 900. Obviamente su nota en Canvas no será de");
+        $display("ese valor sino que se dividirá dentro de 10.");
+        $display("Es decir, su nota es sobre 9.0 puntos netos.");
+        $display("\n");
+    end
+
+    initial begin
+        $dumpfile("uP_tb.vcd");
+        $dumpvars(0, testbench);
+    end
+
     initial begin
         #16
         if (PC === 12'h001 && accu === 4'h4) begin
@@ -116,29 +139,15 @@ module testbench();
             $display("NANDI NO funciona bien.  Su nota es %d/900\n", nota);
     end
 
-    always
-        #5 clock = ~clock;
-
     initial begin
-        clock = 0; reset = 0; pushbuttons = 4'b0110; nota = 0;
-        #2 reset = 1;
-        #1 reset = 0;
-        $display("\n");
-        $display("Bienvenido al testbench de su proyecto");
-        $display("\n");
-        $display("Para facilitar el código del testbench la nota se ha");
-        $display("multplicado por 10. Es decir, la nota máxima de esta");
-        $display("prueba es de 900. Obviamente su nota en Canvas no será de");
-        $display("ese valor sino que se dividirá dentro de 10.");
-        $display("Es decir, su nota es sobre 9.0 puntos netos.");
-        $display("\n");
+        #276
+        if (PC === 12'hA01) begin
+            nota = nota + 60;
+            $display("JMP funciona bien. Ahora estamos en PC = 12'hA01. Su nota es %d/900\n", nota);
+        end
+        else
+            $display("JMP NO funciona bien. El PC no está en la localidad 12'HA01.  Su nota es %d/900\n", nota);
     end
 
-
-
-    initial begin
-        $dumpfile("uP_tb.vcd");
-        $dumpvars(0, testbench);
-    end
 
 endmodule
