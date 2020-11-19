@@ -10,7 +10,7 @@ module testbench();
     integer nota = 0;
     integer immediateDelay = 16;
     integer jumpDelay = 276;
-    integer memoryDelay = 0;
+    integer memoryDelay = 276;
 
     uP uPmodule(.clock(clock),
                 .reset(reset),
@@ -161,13 +161,51 @@ module testbench();
         end
         else
             $display("IN NO funciona bien (la verificación de IN se hizo en 2 partes).  Su nota es %d/900\n", nota);
-        pushbuttons = 4'hE;
 
         $display("-----------------------------------------------------------------------------------------------------------------------------");
-        $display("Hasta este punto se han verificado todas las instrucciones con inmediatos. Ahora se verificarán las instrucciones con saltos.");
+        $display("Hasta este punto se han verificado todas las instrucciones con inmediatos. Ahora se verificarán las instrucciones con memoria RAM.");
         $display("La nota máxima (hasta este punto) es 400.\n");
     end
 
+    initial begin
+        #(memoryDelay - 2)//274
+        if (PC === 12'h00E && accu === 4'hE && address_RAM === 12'h000) begin
+            $display("ST parece funcionar bien, pero no hemos probado si realmente almacenó datos la RAM. PC = 12'h00E, accu = 4'hE y address_RAM = 12'h000. Su nota es %d/900\n", nota);
+        end
+        else
+            $display("ST NO parece funcionar bien. Hay algún problema con el PC, accu o la address_RAM.  Su nota es %d/900\n", nota);
+    end
+
+    initial begin
+        #(memoryDelay + (20 * 6) - 2)//394
+        if (PC === 12'h017 && accu === 4'h1 && address_RAM === 12'h333) begin
+            $display("ST parece funcionar bien, pero no hemos probado si realmente almacenó datos la RAM. PC = 12'h017, accu = 4'h1 y address_RAM = 12'h333. Su nota es %d/900\n", nota);
+        end
+        else
+            $display("ST NO parece funcionar bien. Hay algún problema con el PC, accu o la address_RAM.  Su nota es %d/900\n", nota);
+    end
+
+    initial begin
+        #(memoryDelay + 20 * 7)//416
+        if (PC === 12'h01A && accu === 4'hE) begin
+            $display("LD parece funcionar bien.. PC = 12'h01A, accu = 4'hE. Su nota es %d/900\n", nota);
+        end
+        else
+            $display("LD parece NO funcionar bien. Puede ser un problema con el PC o con el accu  Su nota es %d/900\n", nota);
+    end
+
+    initial begin
+        #(memoryDelay + 20 * 10)//476
+        if (PC === 12'h020 && accu === 4'h1) begin
+            nota = nota + 80;
+            $display("LD parece funcionar bien.. PC = 12'h020, accu = 4'h1. Su nota es %d/900", nota);
+            $display("Se hicieron 4 ST y LD para determinar si realmente se estaban almacenando datos.\n");
+        end
+        else
+            $display("LD parece NO funcionar bien. Puede ser un problema con el PC o con el accu  Su nota es %d/900\n", nota);
+    end
+
+/*
     initial begin
         #(jumpDelay)//276
         if (PC === 12'hA01) begin
@@ -225,7 +263,41 @@ module testbench();
             $display("JNC parece funcionar bien con carry = 0 (1/2). El PC = 12'h223, c_flag = 0, z_flag = 0, accu = 4'h6. Su nota es %d/900\n", nota);
         end
         else
-            $display("JNC NO funciona bien (2/2). El PC no está en 12'h223, alguna bandera está encendida o el accu cambió por alguna razón. Su nota es %d/900\n", nota);
+            $display("JNC NO funciona bien (1/2). El PC no está en 12'h223, alguna bandera está encendida o el accu cambió por alguna razón. Su nota es %d/900\n", nota);
     end
 
+    initial begin
+        #(jumpDelay + 20 * 13)//536
+        if (PC === 12'h225 && z_flag === 1'b0 && c_flag === 1'b1 && accu === 4'hA) begin
+            nota = nota + 30;
+            $display("JNC parece funcionar bien con carry = 1 (2/2). El PC = 12'h225, c_flag = 1, z_flag = 0, accu = 4'hA. Su nota es %d/900\n", nota);
+        end
+        else
+            $display("JNC NO funciona bien (2/2). El PC sí cambió con la bandera carry encendida o el accu cambió por alguna razón. Su nota es %d/900\n", nota);
+    end
+
+    initial begin
+        #(jumpDelay + 20 * 15)//576
+        if (PC === 12'h543 && z_flag === 1'b0 && c_flag === 1'b1 && accu === 4'hA) begin
+            nota = nota + 30;
+            $display("JNZ parece funcionar bien con zero = 0 (1/2). El PC = 12'h543, c_flag = 1, z_flag = 0, accu = 4'hA. Su nota es %d/900\n", nota);
+        end
+        else
+            $display("JNZ NO funciona bien (1/2). El PC no cambió con la bandera zero apagada o el accu cambió por alguna razón. Su nota es %d/900\n", nota);
+    end
+
+    initial begin
+        #(jumpDelay + 20 * 17)//616
+        if (PC === 12'h546 && z_flag === 1'b1 && c_flag === 1'b0 && accu === 4'h0) begin
+            nota = nota + 30;
+            $display("JNZ parece funcionar bien con zero = 0 (2/2). El PC = 12'h546, c_flag = 0, z_flag = 1, accu = 4'h0. Su nota es %d/900\n", nota);
+        end
+        else
+            $display("JNZ NO funciona bien (2/2). El PC sí cambió con la bandera zero encendida o el accu cambió por alguna razón. Su nota es %d/900\n", nota);
+
+        $display("-----------------------------------------------------------------------------------------------------------------------------");
+        $display("Esta última sección de pruebas verificó las instrucciones con saltos.");
+        $display("Su nota final es: %d/900.\n", nota);
+    end
+*/
 endmodule
